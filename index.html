@@ -7,8 +7,8 @@
   <title>ECharts China Map</title>
   <style>
     #china-map {
-      width: 1000px;
-      height: 1000px;
+      width: 800px;
+      height: 800px;
       margin: auto;
     }
   </style>
@@ -30,113 +30,113 @@
 
     var seriesData = [{
       name: '北京',
-      value: 100
+      value: 212
     }, {
       name: '天津',
-      value: 0
+      value: 60
     }, {
       name: '上海',
-      value: 60
+      value: 208
     }, {
       name: '重庆',
-      value: 0
+      value: 337
     }, {
       name: '河北',
-      value: 60
+      value: 126
     }, {
       name: '河南',
-      value: 60
+      value: 675
     }, {
       name: '云南',
-      value: 0
+      value: 117
     }, {
       name: '辽宁',
-      value: 0
+      value: 74
     }, {
       name: '黑龙江',
-      value: 0
+      value: 155
     }, {
       name: '湖南',
-      value: 60
+      value: 593
     }, {
       name: '安徽',
-      value: 0
+      value: 480
     }, {
       name: '山东',
-      value: 60
+      value: 270
     }, {
       name: '新疆',
-      value: 0
+      value: 29
     }, {
       name: '江苏',
-      value: 0
+      value: 308
     }, {
       name: '浙江',
-      value: 0
+      value: 829
     }, {
       name: '江西',
-      value: 0
+      value: 476
     }, {
       name: '湖北',
-      value: 60
+      value: 13522
     }, {
       name: '广西',
-      value: 60
+      value: 139
     }, {
       name: '甘肃',
-      value: 0
+      value: 55
     }, {
       name: '山西',
-      value: 60
+      value: 74
     }, {
       name: '内蒙古',
-      value: 0
+      value: 34
     }, {
       name: '陕西',
-      value: 0
+      value: 142
     }, {
       name: '吉林',
-      value: 0
+      value: 42
     }, {
       name: '福建',
-      value: 0
+      value: 179
     }, {
       name: '贵州',
-      value: 0
+      value: 56
     }, {
       name: '广东',
-      value: 597
+      value: 797
     }, {
       name: '青海',
-      value: 0
+      value: 15
     }, {
       name: '西藏',
-      value: 0
+      value: 1
     }, {
       name: '四川',
-      value: 60
+      value: 282
     }, {
       name: '宁夏',
-      value: 0
+      value: 34
     }, {
       name: '海南',
-      value: 60
+      value: 79
     }, {
       name: '台湾',
-      value: 0
+      value: 10
     }, {
       name: '香港',
-      value: 0
+      value: 15
     }, {
       name: '澳门',
-      value: 0
+      value: 9
     }];
 
     oBack.onclick = function () {
-      initEcharts("china", "中国");
+      initEcharts("china", "中国疫情图");
     };
 
-    initEcharts("china", "中国");
+    initEcharts("china", "中国疫情图");
 
     // 初始化echarts
     function initEcharts(pName, Chinese_) {
@@ -146,6 +146,23 @@
         title: {
           text: Chinese_ || pName,
           left: 'center'
+        },
+        visualMap: {
+          type: 'piecewise',
+          pieces: [
+            {min: 1000, max: 1000000, label: '大于等于1000人', color: '#372a28'},
+            {min: 500, max: 999, label: '确诊500-999人', color: '#4e160f'},
+            {min: 100, max: 499, label: '确诊100-499人', color: '#974236'},
+            {min: 10, max: 99, label: '确诊10-99人', color: '#ee7263'},
+            {min: 1, max: 9, label: '确诊1-9人', color: '#f5bba7'},
+          ],
+          textStyle: {
+            color: '#000000'
+          },
+          inRange: {
+            color: ['lightskyblue', 'yellow', 'orangered']
+          },
+          top: '50%'
         },
         series: [
           {
@@ -197,7 +214,7 @@
 
     // 展示对应的省
     function showProvince(pName, Chinese_) {
-      //这写省份的js都是通过在线构建工具生成的，保存在本地，需要时加载使用即可，最好不要一开始全部直接引入。 
+      //这写省份的js都是通过在线构建工具生成的，保存在本地，需要时加载使用即可，最好不要一开始全部直接引入。
       loadBdScript('$' + pName + 'JS', './js/map/province/' + pName + '.js', function () {
         initEcharts(Chinese_);
       });
@@ -214,7 +231,7 @@
             callback();
           }
         };
-      } else {  // Others  
+      } else {  // Others
         script.onload = function () {
           callback();
         };

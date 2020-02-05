@@ -14,13 +14,29 @@
   </style>
   <script type="text/javascript" src="./js/echarts.min.js"></script>
   <script type="text/javascript" src="./js/map/china.js"></script>
+    <script type="text/javascript" src="./libs/axios.min.js"></script>
+
 </head>
 
 <body>
-  <button id="back">返回全国</button>
+<button id="back">返回全国</button>
   <div id="china-map"></div>
 
   <script>
+
+      var data;
+      var url = "./province.json"/*json文件url，本地的就写本地的位置，如果是服务器的就写服务器的路径*/
+      var request = new XMLHttpRequest();
+      request.onreadystatechange = function () {/*XHR对象获取到返回信息后执行*/
+        if (request.readyState === 4 && request.status === 200) {/*返回状态为200，即为数据获取成功*/
+           data = JSON.parse(request.responseText);
+          console.log(data);
+        }
+      }
+    request.open("get", url, false);/*设置请求方法与路径*/
+    request.send(null);/*不发送数据到服务器*/
+
+
     var myChart = echarts.init(document.getElementById('china-map'));
     var oBack = document.getElementById("back");
 
@@ -202,12 +218,43 @@
     // 初始化echarts
     function initEcharts(pName, Chinese_) {
       console.log("pName:" + pName);
-      var tmpSeriesData =  seriesData[pName];
+      var tmpSeriesData = [];
+      if (pName === 'china') {
+        data.forEach((item)=>{
+          //执行代码
+          var ser = {
+            name: item.provinceShortName,
+            value: item.confirmedCount
+          };
+
+          tmpSeriesData.push(ser);
+        })
+      }else {
+
+
+        data.forEach((item)=>{
+          //执行代码
+          if (item.provinceShortName === pName) {
+            item.cities.forEach((it) => {
+              var ser = {
+                name: it.cityName,
+                value: it.confirmedCount
+              };
+
+              tmpSeriesData.push(ser);
+            })
+          }
+
+        })
+      }
+
+      console.log(tmpSeriesData);
+
       var pieces = pName === "china" ? chinaPieces : proPieces;
 
       var option = {
         title: {
-          text: Chinese_ + '疫情图',
+          text: pName + '疫情图',
           left: 'center'
         },
         visualMap: {
@@ -223,7 +270,7 @@
         },
         series: [
           {
-            name: Chinese_,
+            name: pName,
             type: 'map',
             mapType: pName,
             roam: false,//是否开启鼠标缩放和平移漫游
@@ -257,7 +304,7 @@
           for (var i = 0; i < provincesText.length; i++) {
             if (param.name === provincesText[i]) {
               //显示对应省份的方法
-              showProvince(provinces[i], provincesText[i]);
+              showProvince(provincesText[i], provinces[i] );
               break;
             }
           }
@@ -272,7 +319,7 @@
     // 展示对应的省
     function showProvince(pName, Chinese_) {
       //这写省份的js都是通过在线构建工具生成的，保存在本地，需要时加载使用即可，最好不要一开始全部直接引入。
-      loadBdScript('$' + pName + 'JS', './js/map/province/' + pName + '.js', function () {
+      loadBdScript('$' + Chinese_ + 'JS', './js/map/province/' + Chinese_ + '.js', function () {
         initEcharts(pName, Chinese_);
       });
     }
